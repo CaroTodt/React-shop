@@ -13,11 +13,27 @@ const Header: React.FunctionComponent<RouteComponentProps> = props => {
         setSearch(searchParams.get("search") || "");
     }, []);
 
+    const handleSearchChange = (e:
+        React.ChangeEvent<HTMLInputElement>) => {
+         setSearch(e.currentTarget.value);
+        };
+
+        const handleSearchKeydown = (e:
+            React.KeyboardEvent<HTMLInputElement>) => {
+             if (e.key === "Enter") {
+             props.history.push(`/products?search=${search}`);
+             }
+            };
+            
+
     return (
         <header className="header">
                 <div className="search-container">
                     <input type="search" placeholder="search" value={search} onChange={handleSearchChange} onKeyDown={handleSearchKeydown} />
                 </div>
+                <br/>
+                <br/>   
+                <br/>
                 <img src={logo} className="header-logo" alt="logo" />
                 <h1 className="header-title">React Shop</h1>
                 <nav>
@@ -27,4 +43,4 @@ const Header: React.FunctionComponent<RouteComponentProps> = props => {
         </header>
     );
 };
-export default Header;
+export default withRouter(Header);
