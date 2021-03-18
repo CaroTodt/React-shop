@@ -1,46 +1,87 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import { NavLink, RouteComponentProps, withRouter } from "react-router-dom";
-import logo from "./logo.svg";
 import "url-search-params-polyfill";
+import BasketSummary from "./BasketSummary";
+import { IApplicationState } from "./Store";
 
+import logo from "./logo.svg";
 
+interface IState {
+    search: string;
+}
 
-const Header: React.FunctionComponent<RouteComponentProps> = props => {
-    const [search, setSearch] = React.useState("");
-    React.useEffect(() => {
-        const searchParams = new
-            URLSearchParams(props.location.search);
-        setSearch(searchParams.get("search") || "");
-    }, []);
+interface IProps extends RouteComponentProps {
+    basketCount: number;
+}
 
-    const handleSearchChange = (e:
-        React.ChangeEvent<HTMLInputElement>) => {
-         setSearch(e.currentTarget.value);
+class Header extends React.Component<IProps, IState> {
+    public constructor(props: IProps) {
+        super(props);
+        this.state = {
+            search: ""
         };
-
-        const handleSearchKeydown = (e:
-            React.KeyboardEvent<HTMLInputElement>) => {
-             if (e.key === "Enter") {
-             props.history.push(`/products?search=${search}`);
-             }
-            };
-            
-
-    return (
-        <header className="header">
+    }
+    public componentDidMount() {
+        const searchParams = new URLSearchParams(this.props.location.search);
+        const search = searchParams.get("search") || "";
+        this.setState({ search });
+    }
+    public render() {
+        return (
+            <header className="header">
                 <div className="search-container">
-                    <input type="search" placeholder="search" value={search} onChange={handleSearchChange} onKeyDown={handleSearchKeydown} />
+                    <input
+                        type="search"
+                        placeholder="search"
+                        value={this.state.search}
+                        onChange={this.handleSearchChange}
+                        onKeyDown={this.handleSearchKeydown}
+                    />
+                    <BasketSummary count={this.props.basketCount} />
                 </div>
-                <br/>
-                <br/>   
-                <br/>
                 <img src={logo} className="header-logo" alt="logo" />
                 <h1 className="header-title">React Shop</h1>
                 <nav>
-                    <NavLink to="/products" activeClassName="header-link">Products</NavLink>
-                    <NavLink to="/admin" activeClassName="header-link">Admin</NavLink>
+                    <NavLink
+                        to="/products"
+                        className="header-link"
+                        activeClassName="header-link-active"
+                    >
+                        Products
+          </NavLink>
+                    <NavLink
+                        to="/contactus"
+                        className="header-link"
+                        activeClassName="header-link-active"
+                    >
+                        Contact Us
+          </NavLink>
+                    <NavLink
+                        to="/admin"
+                        className="header-link"
+                        activeClassName="header-link-active"
+                    >
+                        Admin
+          </NavLink>
                 </nav>
-        </header>
-    );
+            </header>
+        );
+    }
+    private handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ search: e.target.value });
+    };
+    private handleSearchKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            this.props.history.push(`/products?search=${this.state.search}`);
+        }
+    };
+}
+
+const mapStateToProps = (store: IApplicationState) => {
+    return {
+        basketCount: store.basket.products.length
+    };
 };
-export default withRouter(Header);
+
+export default connect(mapStateToProps)(withRouter(Header));

@@ -14,6 +14,7 @@ import Footer from "./Footer";
 import ProductPage from "./ProductPage";
 import NotFoundPage from "./NotFoundPage";
 import LoginPage from "./LoginPage";
+import ContactUsPage from "./ContactUsPage";
 import { Suspense } from "react";
 
 const AdminPage = React.lazy(() => import("./AdminPage"));
@@ -43,6 +44,7 @@ const Routes: React.FunctionComponent<RouteComponentProps> = props => {
             <Route exact path="/products" component={ProductsPage} />
             <Route exact path="/products/:id" component={ProductPage} />
             {/* <Route exact path="/admin" component={AdminPage} /> */}
+            <Route path="/contactus" component={ContactUsPage}></Route>
             <Route path="/admin">
               {loggedIn ? (
                 <Suspense fallback={<div className="pagecontainer">Loading...</div>}>
